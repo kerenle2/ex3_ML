@@ -13,7 +13,7 @@ learning_rate = 0.005
 num_epochs = 50
 
 
-def load_data():
+def load_data_old():
     # train_x = np.loadtxt("train_x")
     # train_y = np.loadtxt("train_y")
     train_x = load_10000_data("train_x")
@@ -39,12 +39,12 @@ def load_10000_data(file):
 def normalize(x):
     return np.divide(x, data_max_val)
 
-# def load_data():
-#     train_y = np.loadtxt("train_y")
-#     train_y = np.reshape(train_y, (len(train_y), 1))
-#     train_x = np.loadtxt("train_x")
-#     test_x = np.loadtxt("test_x")
-#     return train_x, train_y, test_x
+def load_data():
+    train_y = np.loadtxt("train_y")
+    train_y = np.reshape(train_y, (len(train_y), 1))
+    train_x = np.loadtxt("train_x")
+    test_x = np.loadtxt("test_x")
+    return train_x, train_y, test_x
 
 sigmoid = lambda x: 1 / (1 + np.exp(-x))
 
@@ -175,8 +175,10 @@ def shuffle2arr(x, y):
 
 if __name__ == "__main__":
     params = init_params()
-    data_x, data_y, test_x = load_data()
+    data_x, data_y, test_x = load_data_old()
     data_x, data_y = shuffle2arr_old(data_x, data_y)
+    # data_x, data_y, test_x = load_data() FOR EFRATTTTTTTTT
+    # data_x, data_y = shuffle2arr(data_x, data_y)
 
     # data_x = normalize(data_x)
 
