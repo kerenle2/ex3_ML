@@ -9,7 +9,7 @@ data_min_val = 0
 data_max_val = 255
 validation = 0.2 # ? can change...
 # alpha =
-learning_rate = 0.005
+learning_rate = 0.05
 num_epochs = 50
 
 
@@ -67,25 +67,24 @@ def init_params():
 
 def train_one_epoch(x, y, params):
     epoch_loss = []
-    x, y = shuffle2arr(x, y) ## why shuffle again????
+    x, y = shuffle2arr(x, y)
     for example, label in zip(x, y):
         example = normalize(example)
         ff_cache = feed_forward(example, label, params)
         bp_cache = back_prop(ff_cache)  # IMPLEMENT THIS
         # need to continue..
-        params = update_params(bp_cache, learning_rate)
+        params = update_params(bp_cache,ff_cache, learning_rate)
         epoch_loss.append(ff_cache['loss']) #DEBUG = check if the
     return params, epoch_loss
 
-def update_params(bp_cache, learning_rate):
+def update_params(bp_cache,params, learning_rate):
     b1, W1, b2, W2 = [params[key] for key in ('b1', 'W1', 'b2', 'W2')]
-    b1 = b1 - learning_rate * b1
-    W1 = W1 - learning_rate * W1
-    b2 = b2 - learning_rate * b2
-    W2 = W2 - learning_rate * W2
+    db1, dW1, db2, dW2 = [bp_cache[key] for key in ('db1', 'dW1', 'db2', 'dW2')]
+    b1 = b1 - learning_rate * db1
+    W1 = W1 - learning_rate * dW1
+    b2 = b2 - learning_rate * db2
+    W2 = W2 - learning_rate * dW2
     ret = {'b1': b1, 'W1': W1, 'b2': b2, 'W2': W2 }
-    # for key in params:
-    #     ret[key] = params[key]
     return ret
 
 def feed_forward(x, y, params):
@@ -122,7 +121,7 @@ def back_prop(ff_cache):
     dz1 = np.dot(ff_cache['W2'].T, dz2) * drelu(z1)  # dL/dz2 * dz2/dh1 * dh1/dz1
     dW1 = np.dot(dz1, x.T)  # dL/dz2 * dz2/dh1 * dh1/dz1 * dz1/dw1
     db1 = dz1  # dL/dz2 * dz2/dh1 * dh1/dz1 * dz1/db1
-    ret = {'b1': db1, 'W1': dW1, 'b2': db2, 'W2': dW2 }
+    ret = {'db1': db1, 'dW1': dW1, 'db2': db2, 'dW2': dW2 }
     return ret
 
 
@@ -150,7 +149,7 @@ def evaluate(x,y,params):
 ################
 #shuffle rows in x and y in the same order
 #############
-def shuffle2arr_old(x,y):
+def shuffle2arr_old(x, y):
     # add x and y together:
     numFeatures = len(x[0])
     alldata = np.zeros((len(x[:, 1]), numFeatures + 1))
