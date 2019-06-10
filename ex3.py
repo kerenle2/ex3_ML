@@ -3,7 +3,7 @@ import numpy as np
 # define all hyper-parameters here:
 
 output_layer_size = 10
-hidden_layer_size = 100 # ?
+hidden_layer_size = 130 # ?
 input_layer_size = 784
 data_min_val = 0
 data_max_val = 255
@@ -84,8 +84,8 @@ def update_params(bp_cache, learning_rate):
     b2 = b2 - learning_rate * b2
     W2 = W2 - learning_rate * W2
     ret = {'b1': b1, 'W1': W1, 'b2': b2, 'W2': W2 }
-    for key in params:
-        ret[key] = params[key]
+    # for key in params:
+    #     ret[key] = params[key]
     return ret
 
 def feed_forward(x, y, params):
@@ -103,6 +103,7 @@ def feed_forward(x, y, params):
     # print("h_oupput is ", str(h_output[:,0]))
     # print("y_vec is ", str(y_vec))
     loss = -(np.dot(y_vec, np.log(h_output)) + np.dot((1 - y_vec), np.log(1 - h_output)))
+
 
     ret = {'x': x, 'y_real': y_vec, 'z1': z1, 'h1': h1, 'z_output': z_output, 'h_output': h_output, 'loss': loss}
     for key in params:
