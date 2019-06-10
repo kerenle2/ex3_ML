@@ -175,8 +175,8 @@ def shuffle2arr(x, y):
 
 if __name__ == "__main__":
     params = init_params()
-    data_x, data_y, test_x = load_data_old()
-    data_x, data_y = shuffle2arr_old(data_x, data_y)
+    data_x, data_y, test_x = load_data()
+    data_x, data_y = shuffle2arr(data_x, data_y)
     # data_x, data_y, test_x = load_data() FOR EFRATTTTTTTTT
     # data_x, data_y = shuffle2arr(data_x, data_y)
 
