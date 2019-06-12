@@ -9,7 +9,7 @@ data_min_val = 0
 data_max_val = 255
 validation = 0.2 # ? can change...
 # alpha =
-learning_rate = 0.05
+learning_rate = 0.005
 num_epochs = 50
 
 
@@ -56,7 +56,10 @@ def drelu(x):
     return x
 
 def softmax(x):
-    return np.exp(x) / np.sum(np.exp(x), axis=0)
+    down = np.sum(np.exp(x), axis=0)
+    res = np.exp(x) / down
+    res[res == 0] = 0.000001
+    return res
 
 def init_params():
     params = {'W1' : np.random.rand(hidden_layer_size, input_layer_size) *0.2 - 0.1,
@@ -101,9 +104,8 @@ def feed_forward(x, y, params):
     y_vec[np.int(y)] = 1
     # print("h_oupput is ", str(h_output[:,0]))
     # print("y_vec is ", str(y_vec))
-    loss = -(np.dot(y_vec, np.log(h_output)) + np.dot((1 - y_vec), np.log(1 - h_output)))
-
-
+    # loss = -(np.dot(y_vec, np.log(h_output)) + np.dot((1 - y_vec), np.log(1 - h_output)))
+    loss = -np.dot(y_vec, np.log(h_output))
     ret = {'x': x, 'y_real': y_vec, 'z1': z1, 'h1': h1, 'z_output': z_output, 'h_output': h_output, 'loss': loss}
     for key in params:
         ret[key] = params[key]
@@ -198,7 +200,8 @@ if __name__ == "__main__":
         params, epoch_loss = train_one_epoch(train_x, train_y, params)
         mean_loss = np.mean(epoch_loss)
         correctness = evaluate(validation_x,validation_y,params)
-        print("loss is: " + str(mean_loss))
-        print("correctness is: " + str(correctness))
+        print("epoch number: ", epoch)
+        print("loss: " + str(mean_loss))
+        print("correctness: " + str(correctness))
         if correctness > 0.9:
             break
