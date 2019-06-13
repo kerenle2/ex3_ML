@@ -1,4 +1,5 @@
 import numpy as np
+from statistics import mean
 
 # define all hyper-parameters here:
 
@@ -88,6 +89,7 @@ def update_params(bp_cache,params, learning_rate):
 
     return ret
 
+
 def feed_forward(x, y, params):
     W1, b1, W2, b2 = [params[key] for key in ('W1', 'b1', 'W2', 'b2')]
     x.shape = (input_layer_size, 1) # this makes x transpose (x as a columne, not as a row)
@@ -102,7 +104,8 @@ def feed_forward(x, y, params):
     y_vec[np.int(y)] = 1
     # print("h_oupput is ", str(h_output[:,0]))
     # print("y_vec is ", str(y_vec))
-    loss = -(np.dot(y_vec, np.log(h_output)) + np.dot((1 - y_vec), np.log(1 - h_output)))
+    loss = -(np.dot(y_vec, np.log(h_output)))
+    # loss = -(np.dot(y_vec, np.log(h_output)) + np.dot((1 - y_vec), np.log(1 - h_output)))
 
     ret = {'x': x, 'y_real': y_vec, 'z1': z1, 'h1': h1, 'z_output': z_output, 'h_output': h_output, 'loss': loss}
     for key in params:
@@ -200,5 +203,3 @@ if __name__ == "__main__":
         correctness = evaluate(validation_x,validation_y,params)
         print("loss is: " + str(mean_loss))
         print("correctness is: " + str(correctness))
-        if correctness > 0.9:
-            break
