@@ -12,32 +12,13 @@ validation = 0.2 # ? can change...
 learning_rate = 0.005
 num_epochs = 50
 
+sigmoid = lambda x: 1 / (1 + np.exp(-x))
+relu = lambda x: np.maximum(x, np.zeros(np.shape(x)))
 
-def load_data_old():
-    # train_x = np.loadtxt("train_x")
-    # train_y = np.loadtxt("train_y")
-    train_x = load_10000_data("train_x")
-    train_y = load_10000_data("train_y")
-    train_y = train_y[:,0]
-    # train_y = np.reshape(train_y, (len(train_y), 1))
-    test_x = np.loadtxt("test_x")
-    return train_x, train_y, test_x
-
-#############load train x - just 1000 lines - tempuarly!!!!!1##########
-def load_10000_data(file):
-    rows = 0
-    for line in open(file):
-        rows += 1
-    data = np.zeros((10000,784))
-    row = 0
-    for line in open(file):
-        if row < 10000:
-            data[row] = np.fromstring(line, sep=" ")
-            row += 1
-    return data
 
 def normalize(x):
     return np.divide(x, data_max_val)
+
 
 def load_data():
     train_y = np.loadtxt("train_y")
@@ -46,14 +27,12 @@ def load_data():
     test_x = np.loadtxt("test_x")
     return train_x, train_y, test_x
 
-sigmoid = lambda x: 1 / (1 + np.exp(-x))
-
-relu = lambda x: np.maximum(x, np.zeros(np.shape(x)))
 
 def drelu(x):
     x[x <= 0] = 0
     x[x > 0] = 1
     return x
+
 
 def softmax(x):
     down = np.sum(np.exp(x), axis=0)
@@ -61,12 +40,18 @@ def softmax(x):
     res[res == 0] = 0.000001
     return res
 
+
 def init_params():
-    params = {'W1' : np.random.rand(hidden_layer_size, input_layer_size) *0.2 - 0.1,
-              'b1' : np.random.rand(hidden_layer_size, 1)*0.2 - 0.1,
-              'W2' : np.random.rand(output_layer_size, hidden_layer_size)*0.2 - 0.1,
-              'b2' : np.random.rand(output_layer_size, 1)*0.2 - 0.1}
+    # params = {'W1' : np.random.rand(hidden_layer_size, input_layer_size) *0.2 - 0.1,
+    #           'b1' : np.random.rand(hidden_layer_size, 1)*0.2 - 0.1,
+    #           'W2' : np.random.rand(output_layer_size, hidden_layer_size)*0.2 - 0.1,
+    #           'b2' : np.random.rand(output_layer_size, 1)*0.2 - 0.1}
+    params = {'W1': np.random.uniform( low=-0.5, high=0.5, size=(hidden_layer_size, input_layer_size)),
+              'b1': np.random.uniform(low=-0.5, high=0.5,size=(hidden_layer_size, 1)),
+              'W2': np.random.uniform(low=-0.5, high=0.5,size=(output_layer_size, hidden_layer_size)),
+              'b2': np.random.uniform(low=-0.5, high=0.5, size=(output_layer_size, 1))}
     return params
+
 
 def train_one_epoch(x, y, params):
     epoch_loss = []
@@ -79,6 +64,7 @@ def train_one_epoch(x, y, params):
         params = update_params(bp_cache,ff_cache, learning_rate)
         epoch_loss.append(ff_cache['loss']) #DEBUG = check if the
     return params, epoch_loss
+
 
 def update_params(bp_cache,params, learning_rate):
     b1, W1, b2, W2 = [params[key] for key in ('b1', 'W1', 'b2', 'W2')]
@@ -111,7 +97,6 @@ def feed_forward(x, y, params):
     for key in params:
         ret[key] = params[key]
     return ret
-
 
 
 def back_prop(ff_cache):
@@ -165,6 +150,7 @@ def shuffle2arr_old(x, y):
     datay = alldata[:, -1]
     return datax, datay
 
+
 def model_output(x,params):
     #create output file
     file = open('test_y', 'w')
@@ -173,6 +159,7 @@ def model_output(x,params):
         y_hat = predict_y(example, params)
         file.write(str(y_hat) + '\n')
     file.close()
+
 
 def shuffle2arr(x, y):
     alldata = np.append(x, y, axis=1)
@@ -209,7 +196,5 @@ if __name__ == "__main__":
         print("epoch number: ", epoch)
         print("loss: " + str(mean_loss))
         print("correctness: " + str(correctness))
-        # if correctness > 0.9:
-        #     break
-    model_output(test_x,params)
+    model_output(test_x, params)
 
